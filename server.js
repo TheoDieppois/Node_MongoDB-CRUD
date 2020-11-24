@@ -1,45 +1,90 @@
 const express = require('express');
+const cors = require('cors')
+const mongoose = require('mongoose')
 const app = express();
-const port = process.env.PORT || 8000;
-const MongoClient = require('mongodb').MongoClient;
-const URI = "mongodb+srv://root:admin@cluster0.6wggo.mongodb.net/airbnb?retryWrites=true&w=majority"; 
-let db;
- 
 
-MongoClient.connect(URI, function(err, client) {
-    if (err)  {
-        console.log(err);
-        throw err;
-    }
-    console.log("Connected successfully to server");
-    db = client.db("airbnb");
-});
+require('dotenv').config()
+const port = process.env.PORT || 8080;
 
-app.get('/lieux/', async (req, res) => {
-    const lieux = db.collection("lieu").find({}, {"id":1, "name": 1, "description":1}).toArray((err, docs) => {
-        if (err) {
-            console.log(err)
-            throw err
-        }
-        console.log(docs);
-        res.status(200).json(docs)
-    });
-});
 
-app.get('/lieu/:id', async (req, res) => {
-    res.send(req.params.id)
-});
+//Model
+let Lieu = require('./models/lieux.model')
 
-app.get('/lieu/:date', async (req, res) => {
-    res.send(req.params.id)
-});
 
-app.delete('/lieu/:id', (req, res) => {
+//Midllewares
+app.use(cors())
+app.use(express.json())
 
+
+//Db
+const uri = process.env.ATLAS_URI
+mongoose.connect(uri, {
+    useNewUrlParser: true,
+    useCreateIndex: true
 })
 
-app.put('/lieu/:id', (req, res) => {
+const connection = mongoose.connection
 
+connection.once('open', () => {
+    console.log('Connected to the Database')
+})
+
+
+//Routes
+app.get('/', async (req, res) => {
+    try {
+        const lieux = await Lieu.find().limit(100)
+        res.json(lieux)
+    } catch(err) {
+        res.status(400).json(err)
+    }
+});
+
+app.get('/:id', async (req, res) => {
+    try {
+        const lieu = await Lieu.findById(req.params.id)
+        res.json(lieu)
+    } catch(err) {
+        res.status(400).json(err)
+    }
+});
+
+app.get('/date/:date', async (req, res) => {
+    try {
+        const lieu = await Lieu.find({host_since: req.params.date})
+        res.json(lieu)
+    } catch(err) {
+        res.status(400).json(err)
+    }
+});
+
+app.delete('/:id', async (req, res) => {
+    try {
+        const lieu = await Lieu.findByIdAndDelete(req.params.id)
+        res.json(lieu)
+    } catch(err) {
+        res.status(400).json(err)
+    }
+})
+
+app.put('/:id', async (req, res) => {
+    try {
+        const lieu = await Lieu.findByIdAndUpdate(req.params.id, { name: req.body.name })
+        res.json(lieu)
+    } catch(err) {
+        res.status(400).json(err)
+    }
+})
+
+app.post('/update/:id', (req, res) => {
+    Lieu.findById(req.params.id)
+    .then(lieu => {
+        lieu.name = req.body.name
+
+        lieu.save()
+        .then(() => res.json('Updated'))
+        .catch(err => res.status(400).json(err))
+    })
 })
 
 
