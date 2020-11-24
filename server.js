@@ -16,11 +16,12 @@ MongoClient.connect(URI, function(err, client) {
 });
 
 app.get('/lieux/', async (req, res) => {
-    const lieux = db.collection("lieu").find().toArray((err, docs) => {
+    const lieux = db.collection("lieu").find({}, {"id":1, "name": 1, "description":1}).toArray((err, docs) => {
         if (err) {
             console.log(err)
             throw err
         }
+        console.log(docs);
         res.status(200).json(docs)
     });
 });
