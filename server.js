@@ -1,21 +1,20 @@
 const express = require('express');
 const app = express();
 const port = process.env.PORT || 8000;
-var mongoose = require('mongoose'); 
+const mongoose = require('mongoose'); 
 
-
-var options = { server: { socketOptions: { keepAlive: 300000, connectTimeoutMS: 30000 } }, 
-replset: { socketOptions: { keepAlive: 300000, connectTimeoutMS : 30000 } } };
  
-var urlmongo = ""; 
+const URI = "mongodb+srv://groupeE:passwordgroupee@cluster0.6wggo.mongodb.net/test?retryWrites=true&w=majority"; 
  
-mongoose.connect(urlmongo, options);
+mongoose.connect(URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+}) 
+.then(() => {
+    console.log()
+})
  
-var db = mongoose.connection; 
-db.on('error', console.error.bind(console, 'Erreur lors de la connexion')); 
-db.once('open', function (){
-    console.log("Connexion à la base OK"); 
-}); 
+const db = mongoose.connection; 
 
 app.get('/', (req, res) => {
     res.send('Hello world !!');
