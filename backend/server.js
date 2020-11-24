@@ -1,48 +1,44 @@
 const express = require('express');
 const app = express();
 const port = process.env.PORT || 8000;
-const mongoose = require('mongoose'); 
-
-
-const Lieux = require("./model/lieu")
-const URI = "mongodb+srv://groupeE:passwordgroupee@cluster0.6wggo.mongodb.net/airbnb?retryWrites=true&w=majority"; 
+const MongoClient = require('mongodb').MongoClient;
+const URI = "mongodb+srv://root:admin@cluster0.6wggo.mongodb.net/airbnb?retryWrites=true&w=majority"; 
+let db;
  
 
-mongoose.connect(URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-}) 
-.then(() => {
-    console.log('MongoDB Connected...')
-})
-.catch(err => console.log(err))
+MongoClient.connect(URI, function(err, client) {
+    if (err)  {
+        console.log(err);
+        throw err;
+    }
+    console.log("Connected successfully to server");
+    db = client.db("airbnb");
+});
 
-
-
-app.get('/', async (req, res) => {
-    await Lieux.find(((err, lieu) => {
-        if (err){
-            res.send(err); 
-        } else {
-            res.json(lieu);   
+app.get('/lieux/', async (req, res) => {
+    const lieux = db.collection("lieu").find().toArray((err, docs) => {
+        if (err) {
+            console.log(err)
+            throw err
         }
-    }))
+        res.status(200).json(docs)
+    });
 });
 
-app.get('/:id', async (req, res) => {
+app.get('/lieu/:id', async (req, res) => {
     res.send(req.params.id)
 });
 
-app.get('/:date', async (req, res) => {
+app.get('/lieu/:date', async (req, res) => {
     res.send(req.params.id)
 });
 
-app.delete('/:id', (req, res) => {
-    
+app.delete('/lieu/:id', (req, res) => {
+
 })
 
-app.put('/:id', (req, res) => {
-    
+app.put('/lieu/:id', (req, res) => {
+
 })
 
 
