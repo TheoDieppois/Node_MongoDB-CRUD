@@ -3,7 +3,7 @@ const app = express();
 const port = process.env.PORT || 8000;
 const mongoose = require('mongoose'); 
 
- 
+
 const URI = "mongodb+srv://groupeE:passwordgroupee@cluster0.6wggo.mongodb.net/test?retryWrites=true&w=majority"; 
  
 mongoose.connect(URI, {
@@ -11,10 +11,10 @@ mongoose.connect(URI, {
     useUnifiedTopology: true
 }) 
 .then(() => {
-    console.log()
+    console.log('MongoDB Connected...')
 })
- 
-const db = mongoose.connection; 
+.catch(err => console.log(err))
+
 
 app.get('/', (req, res) => {
     res.send('Hello world !!');
