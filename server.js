@@ -69,23 +69,29 @@ app.delete('/:id', async (req, res) => {
 
 app.put('/:id', async (req, res) => {
     try {
-        const lieu = await Lieu.findByIdAndUpdate(req.params.id, { name: req.body.name })
-        res.json(lieu)
+        await Lieu.findByIdAndUpdate(req.params.id, { 
+            picture_url: req.body.image,
+            name: req.body.name,
+            description: req.body.description,
+            host_location: req.body.lieu,
+            host_since: req.body.date 
+        })
+        res.json('Updated')
     } catch(err) {
         res.status(400).json(err)
     }
 })
 
-app.post('/update/:id', (req, res) => {
-    Lieu.findById(req.params.id)
-    .then(lieu => {
-        lieu.name = req.body.name
+// app.post('/update/:id', (req, res) => {
+//     Lieu.findById(req.params.id)
+//     .then(lieu => {
+//         lieu.name = req.body.name
 
-        lieu.save()
-        .then(() => res.json('Updated'))
-        .catch(err => res.status(400).json(err))
-    })
-})
+//         lieu.save()
+//         .then(() => res.json('Updated'))
+//         .catch(err => res.status(400).json(err))
+//     })
+// })
 
 
 app.listen(port, () => {
