@@ -49,15 +49,6 @@ app.get('/:id', async (req, res) => {
     }
 });
 
-app.get('/date/:date', async (req, res) => {
-    try {
-        const lieu = await Lieu.find({host_since: req.params.date})
-        res.json(lieu)
-    } catch(err) {
-        res.status(400).json(err)
-    }
-});
-
 app.delete('/:id', async (req, res) => {
     try {
         const lieu = await Lieu.findByIdAndDelete(req.params.id)
@@ -82,16 +73,29 @@ app.put('/:id', async (req, res) => {
     }
 })
 
-// app.post('/update/:id', (req, res) => {
-//     Lieu.findById(req.params.id)
-//     .then(lieu => {
-//         lieu.name = req.body.name
+app.post('/create', (req, res) => {
+    const lieu = new Lieu({
+        picture_url: req.body.image,
+        name: req.body.name,
+        description: req.body.description,
+        host_location: req.body.lieu,
+        host_since: req.body.date 
+    })
 
-//         lieu.save()
-//         .then(() => res.json('Updated'))
-//         .catch(err => res.status(400).json(err))
-//     })
-// })
+    lieu.save()
+    .then(() => res.json('Created'))
+    .catch(err => res.status(400).json(err))
+})
+
+
+// app.get('/date/:date', async (req, res) => {
+//     try {
+//         const lieu = await Lieu.find({host_since: req.params.date})
+//         res.json(lieu)
+//     } catch(err) {
+//         res.status(400).json(err)
+//     }
+// });
 
 
 app.listen(port, () => {
