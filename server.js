@@ -6,9 +6,9 @@ const app = express();
 require('dotenv').config()
 const port = process.env.PORT || 8080;
 
-
 //Model
 let Lieu = require('./models/lieux.model')
+let Prediction = require('./models/prediction.model')
 
 
 //Midllewares
@@ -87,15 +87,22 @@ app.post('/create', (req, res) => {
     .catch(err => res.status(400).json(err))
 })
 
+app.post('/image', (req, res) => {
+    console.log(req)
 
-// app.get('/date/:date', async (req, res) => {
-//     try {
-//         const lieu = await Lieu.find({host_since: req.params.date})
-//         res.json(lieu)
-//     } catch(err) {
-//         res.status(400).json(err)
-//     }
-// });
+    const prediction = new Prediction({
+        name: req.body.predict.nom,
+        probability: req.body.predict.probabilite,
+        image64: '.....On verra'
+    })
+
+
+    prediction.save()
+    .then(() => res.json('Created'))
+    .catch(err => res.status(400).json(err))
+})
+
+
 
 
 app.listen(port, () => {
