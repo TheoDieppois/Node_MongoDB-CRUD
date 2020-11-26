@@ -102,6 +102,15 @@ app.post("/image", (req, res) => {
     .catch((err) => res.status(400).json(err));
 });
 
+app.get("/predictions", (req, res) => {
+  try {
+    const predictions = await Prediction.find();
+    res.json(predictions);
+  } catch (err) {
+    res.status(400).json(err);
+  }
+});
+
 app.listen(port, () => {
   console.log("Server app listening on port " + port);
 });
