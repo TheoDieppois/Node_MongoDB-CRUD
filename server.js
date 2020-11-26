@@ -102,7 +102,7 @@ app.post("/image", (req, res) => {
     .catch((err) => res.status(400).json(err));
 });
 
-app.get("/predictions", (req, res) => {
+app.get("/predictions", async (req, res) => {
   try {
     const predictions = await Prediction.find();
     res.json(predictions);
