@@ -1,5 +1,5 @@
-const mongoose = require('mongoose')
+const mongoose = require("mongoose");
 
-const schema = mongoose.Schema({}, { strict: false })
+const schema = mongoose.Schema({}, { strict: false });
 
-module.exports = mongoose.model('Prediction', schema)
+module.exports = mongoose.model("Prediction", schema, "predictions");
