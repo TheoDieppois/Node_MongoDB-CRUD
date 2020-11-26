@@ -37,10 +37,28 @@ app.get("/", async (req, res) => {
   }
 });
 
+app.get("/predictions", async (req, res) => {
+  try {
+    const predictions = await Prediction.find();
+    res.json(predictions);
+  } catch (err) {
+    res.status(400).json(err);
+  }
+});
+
 app.get("/:id", async (req, res) => {
   try {
     const lieu = await Lieu.findById(req.params.id);
     res.json(lieu);
+  } catch (err) {
+    res.status(400).json(err);
+  }
+});
+
+app.delete("/predictions/:id", async (req, res) => {
+  try {
+    const prediction = await Prediction.findByIdAndDelete(req.params.id);
+    res.json(prediction);
   } catch (err) {
     res.status(400).json(err);
   }
@@ -100,15 +118,6 @@ app.post("/image", (req, res) => {
     .save()
     .then(() => res.json("Created"))
     .catch((err) => res.status(400).json(err));
-});
-
-app.get("/predictions", async (req, res) => {
-  try {
-    const predictions = await Prediction.find();
-    res.json(predictions);
-  } catch (err) {
-    res.status(400).json(err);
-  }
 });
 
 app.listen(port, () => {
